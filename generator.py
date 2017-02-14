@@ -3,8 +3,6 @@ from datetime import datetime
 
 client = MongoClient()
 
-client.drop_database('jikexueyuan')
-
 
 db_1 = client['jike']
 col_1 = db_1['spider']
