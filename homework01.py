@@ -78,7 +78,11 @@ class DataBaseManager(object):
         if not 'id' in param_dict:
             print('please use id to identify person.')
             return
-        #todo: 需要输入更新的字段有且仅有一个
+
+        if len(param_dict.keys()) != 2:
+            print('please update a single property each time')
+            return
+
         try:
             for key, value in param_dict.items():
                 if key == 'id':
@@ -91,9 +95,7 @@ class DataBaseManager(object):
             print('update person info error because: {}'.format(e))
 
     def del_person_info(self, param_dict):
-        '''
-        删除人员信息。
-        '''
+
         if not param_dict:
             print('you have to identify who you want to delete.')
             return
@@ -106,9 +108,7 @@ class DataBaseManager(object):
         print(output)
 
     def show_person_info(self, params):
-        '''
-        show命令在不带参数的情况下，会显示所有人的信息。带了参数，就会根据参数来做过滤。
-        '''
+
         if params:
             self.show_spicific_person_info(params)
         else:
@@ -129,10 +129,7 @@ class DataBaseManager(object):
             print(output)
 
     def generate_show_output(self, query_result):
-        '''
-        输出查询的结果。限定了输出的内容只有id,name,age,sex,salary这几项，并且使用ljust, center和rjust来让
-        格式显得比较整齐。
-        '''
+
         output = 'id'.ljust(20) + \
                  'name'.ljust(20) + \
                  'age'.center(20) + \
