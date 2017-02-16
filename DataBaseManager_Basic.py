@@ -167,4 +167,5 @@ class DataBaseManager(object):
           '''
         print(help_message)
 
-DataBaseManager()
+if __name__ == '__main__':
+    DataBaseManager()
