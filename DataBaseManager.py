@@ -36,6 +36,8 @@ class DataBaseManager(object):
         if keyword in self.method_dict:
             param_dict = self.generate_param_dict(command_list[1:])
             self.method_dict[keyword](param_dict) if keyword not in ['help', 'exit'] else self.method_dict[keyword]()
+        else:
+            self.show_help()
 
     def generate_param_dict(self, params):
         param_dict = {}
