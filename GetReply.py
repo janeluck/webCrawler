@@ -21,7 +21,7 @@ for each in getPure(replies):
         'reply_time':re.findall('>(20\d\d-\d\d-.*?)</span', re.findall('post-tail-wrap(.*?)p_props_tail', each, re.S)[0], re.S)[0].strip(),
     })
 
-
+#生成csv文件
 with open('result.csv', 'w', encoding='UTF-8') as f:
     writer = csv.DictWriter(f, fieldnames=['username', 'content', 'reply_time'])
     writer.writeheader()
