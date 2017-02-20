@@ -12,8 +12,6 @@ def getPure(replies):
     去除广告贴
     '''
 
-
-
     return [elem for elem in replies if 'label_text">广告' not in elem]
 
 
