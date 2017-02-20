@@ -6,8 +6,14 @@ with open('source.htm', 'r', encoding='UTF-8') as f:
 #获取所有的回复生成一个list
 replies = re.findall('j_l_post(.*?)class="l_post', source, re.S)
 
-#去除广告贴
+
 def getPure(replies):
+    '''
+    去除广告贴
+    '''
+
+
+
     return [elem for elem in replies if 'label_text">广告' not in elem]
 
 
