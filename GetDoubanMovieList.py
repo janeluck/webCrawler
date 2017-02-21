@@ -68,6 +68,7 @@ if __name__ == '__main__':
     movieSpider = MovieSpider()
     #抓取前10页
     pool.map(movieSpider.run, [x for x in range(0, 10)])
+    pool.close()
     movieSpider.write_csv()
     print('抓取完成!')
 
