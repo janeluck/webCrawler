@@ -19,12 +19,21 @@ class DataBaseManager(object):
         self.run()
 
     def run(self):
+        '''
+        启动一个循环, 直到输入exit为止
+        拿到用户输入, 分析执行
+        '''
         command = 'help'
         while command != 'exit':
             command = self.getInput()
             self.analysis(command)
 
     def analysis(self, command):
+
+        '''
+        分析具体是哪个命令, 执行对应操作
+
+        '''
         if not command:
             return None
         '''
@@ -40,7 +49,10 @@ class DataBaseManager(object):
             self.show_help()
 
     def generate_param_dict(self, params):
+
         param_dict = {}
+
+        #输入的命令是以空格为分割, 使用split切成列表, 第一个元素为键名, 第二个是value值
         try:
             for param in params:
                 key, value = param.split('=')
@@ -56,6 +68,12 @@ class DataBaseManager(object):
         return command
 
     def add_person_info(self, param_dict):
+        '''
+        添加人员, 如果id已存在或者信息不全就给出提示
+
+        :param param_dict:
+        :return:
+        '''
         def check_if_id_exists(person_id):
             return True if [x for x in self.col.find({'id': person_id})] else False
 
@@ -77,6 +95,12 @@ class DataBaseManager(object):
             print(output)
 
     def update_person_info(self, param_dict):
+
+        '''
+        使用id更新人员信息
+        :param param_dict:
+        :return:
+        '''
         if not 'id' in param_dict:
             print('please use id to identify person.')
             return
@@ -110,7 +134,12 @@ class DataBaseManager(object):
         print(output)
 
     def show_person_info(self, params):
+        '''
+        show 不带参数时显示所有的人员信息, 有的话根据条件过滤显示
 
+        :param params:
+        :return:
+        '''
         if params:
             self.show_spicific_person_info(params)
         else:
@@ -150,6 +179,11 @@ class DataBaseManager(object):
         print(output)
 
     def show_help(self):
+        '''
+        help命令或者无用输入对应的输出信息
+
+        :return:
+        '''
         help_message = '''
           the basic usage is like this:
 
