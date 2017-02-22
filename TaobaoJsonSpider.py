@@ -4,6 +4,8 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 import csv
 import requests
+from datetime import date
+
 
 class TaobaoJsonSpider(object):
     '''
@@ -11,7 +13,7 @@ class TaobaoJsonSpider(object):
     '''
 
     def __init__(self):
-        self.driver = webdriver.Chrome('./chromedriver')
+
         self.run()
 
 
@@ -29,43 +31,34 @@ class TaobaoJsonSpider(object):
 
     def get_source(self, keyword):
         '''
-        发起搜索并获取网页信息
-        返回可用信息列表
+        发起搜索并获取json
         '''
 
-        self.driver.get('https://s.taobao.com/search?q={}ajax=true'.format(keyword))
+        source = requests.get('https://s.taobao.com/search?q={}&ajax=true'.format(keyword)).json()
 
-        #等待ajax返回数据
-        WebDriverWait(self.driver, 1000).until(EC.presence_of_element_located((By.CLASS_NAME, "m-itemlist")))
-
-        #拿到当页所有的商品信息
-        goodsElement = self.driver.find_elements_by_css_selector('.J_MouserOnverReq')
-
+        # 拿到当页所有的商品信息
+        items = source['mods']['itemlist']['data']['auctions']
 
         goods_list = []
 
-        #遍历每一个商品, 取出名称name, 链接link, 价格price, 店名shop, 地址location, 已付款人数deal-cnt
-        for goods in goodsElement:
+        for item in items:
 
-            goods_dict = {
-                'name': goods.find_element_by_xpath('.//a[starts-with(@id, "J_Itemlist_TLink_")]').text,
-                'link': goods.find_element_by_xpath('.//a[starts-with(@id, "J_Itemlist_TLink_")]').get_attribute(
-                    'href'),
-                'price': goods.find_element_by_css_selector('.price').text[1:],
-                'shop': goods.find_elements_by_css_selector('.shopname>span')[1].text,
-                'location': goods.find_element_by_css_selector('.location').text,
-                'deal-cnt': goods.find_element_by_css_selector('.deal-cnt').text[:-3]
+            goods = {
+                'name': item['raw_title'],
+                'link': item['detail_url'],
+                'price': item['view_price'],
+                'shop': item['nick'],
+                'location': item['item_loc'],
+                'deal-cnt': item['view_sales'][:-3]
+
             }
 
-
-            goods_list.append(goods_dict)
-
+            goods_list.append(goods)
             # 打印每个商品的信息
-            print(goods_dict)
-            print('\n')
+            print(goods)
 
-        self.driver.close()
-        return  goods_list
+        return goods_list
+
 
 
 
