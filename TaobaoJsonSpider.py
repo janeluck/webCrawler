@@ -1,7 +1,3 @@
-from selenium import webdriver
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support import expected_conditions as EC
 import csv
 import requests
 from datetime import date
@@ -13,15 +9,12 @@ class TaobaoJsonSpider(object):
     '''
 
     def __init__(self):
-
         self.run()
 
-
     def run(self):
-
         keyword = self.get_input()
         result = self.get_source(keyword)
-        self.write_csv(result)
+        self.write_csv(keyword, result)
 
     def get_input(self):
         '''
@@ -42,7 +35,6 @@ class TaobaoJsonSpider(object):
         goods_list = []
 
         for item in items:
-
             goods = {
                 'name': item['raw_title'],
                 'link': item['detail_url'],
@@ -59,20 +51,18 @@ class TaobaoJsonSpider(object):
 
         return goods_list
 
-
-
-
-    def write_csv(self, goods_list):
+    def write_csv(self, keyword, goods_list):
         '''
         #生成csv文件
         '''
 
-        with open('taobao.csv', 'w', encoding='UTF-8') as f:
-
+        with open(keyword + 'Taobao' + date.today().strftime('%Y-%m-%d') + '.csv', 'w', encoding='UTF-8') as f:
             writer = csv.DictWriter(f, fieldnames=['name', 'price', 'shop', 'location', 'deal-cnt', 'link'])
             writer.writeheader()
             writer.writerows(goods_list)
 
 
 if __name__ == '__main__':
+
     TaobaoJsonSpider()
+
