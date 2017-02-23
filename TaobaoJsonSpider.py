@@ -31,10 +31,10 @@ class TaobaoJsonSpider(object):
 
         # 拿到当页所有的商品信息
         items = source['mods']['itemlist']['data']['auctions']
-
         goods_list = []
 
         for item in items:
+
             goods = {
                 'name': item['raw_title'],
                 'link': item['detail_url'],
@@ -46,6 +46,7 @@ class TaobaoJsonSpider(object):
             }
 
             goods_list.append(goods)
+
             # 打印每个商品的信息
             print(goods)
 
@@ -53,7 +54,7 @@ class TaobaoJsonSpider(object):
 
     def write_csv(self, keyword, goods_list):
         '''
-        #生成csv文件
+        生成csv文件
         '''
 
         with open(keyword + 'Taobao' + date.today().strftime('%Y-%m-%d') + '.csv', 'w', encoding='UTF-8') as f:
