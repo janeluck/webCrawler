@@ -51,6 +51,9 @@ class DoubanUserSpider(object):
 
 
     def login(self, token):
+
+
+        # 请求登录接口
         self.s.post('https://accounts.douban.com/login', data={
             'source': 'None',
             'redir': 'https://www.douban.com/',
@@ -61,6 +64,8 @@ class DoubanUserSpider(object):
             'captcha-solution': input('请输入验证码\n'),
         })
 
+
+        # 获取输入的用户id
         command  = 'command'
 
         while command != 'exit':
@@ -72,8 +77,10 @@ class DoubanUserSpider(object):
 
     def get_userInfo(self, user_id):
 
-
+        # 获取用户主页
         user_page = self.s.get('https://www.douban.com/people/' + user_id).content.decode()
+
+        # 截取title标签里的内容, 拿到用户名
         print(re.findall('title>(.*?)</title>', user_page, re.S)[0].strip())
 
 
