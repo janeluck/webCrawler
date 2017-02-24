@@ -61,7 +61,7 @@ class DoubanUserSpider(object):
             'form_password': 'janeluck9158',
             'login': '登录',
             'captcha-id': token,
-            'captcha-solution': input('请输入验证码\n'),
+            'captcha-solution': input('请查看captcha.png, 输入验证码:\n'),
         })
 
 
