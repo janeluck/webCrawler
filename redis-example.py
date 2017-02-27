@@ -3,6 +3,11 @@ r = redis.StrictRedis(host='127.0.0.1', port=6379, db=0) #注意这里我使用�
 r.set('key', 'value')
 r.set('name', 'kingname') #添加新信息
 r.append('name', ' is a super man.') #在原有信息的尾部添加信息
+
+r.hmset('student', {'name': 'Bob'})
+
+
+
 r.delete('name') #删除key
 name = r.get('name')
 print(name)
