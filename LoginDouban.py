@@ -30,11 +30,12 @@ class DoubanUserSpider(object):
             'captcha-solution': input('请查看captcha.png, 输入验证码:\n'),
         })
         # 获取输入的用户id
-        command  = 'command'
-        while command != 'exit':
+        while True:
             command = input('请输入用户ID: \n').strip()
+            if command == 'exit':
+                exit()
             self.get_userInfo(command)
-        exit()
+
 
     def get_userInfo(self, user_id):
         # 获取用户主页
