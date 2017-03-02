@@ -12,10 +12,11 @@ class DoubanbookSpider(scrapy.Spider):
         book_list_group = response.xpath('//div[@class="article"]/div[2]/div')[0]
         book_list_urls = book_list_group.xpath('table/tbody/tr/td/a/@href').extract()
         for book_list in book_list_urls:
-
-            yield scrapy.Request('https://book.douban.com' + book_list, callback=self.parse_book_list_detail, dont_filter=True, meta={
-                'book-list-name': book_list[5:]
-            })
+            yield scrapy.Request('https://book.douban.com' + book_list, callback=self.parse_book_list_detail,
+                                 dont_filter=True, meta={
+                    'book_list_name': book_list[5:],
+                    'book_list_link': 'https://book.douban.com' + book_list
+                })
 
             # item = ProgramItem()
             # item['book_list_title'] = book_list.xpath('header/h3/a/text()').extract()[0]
@@ -31,22 +32,19 @@ class DoubanbookSpider(scrapy.Spider):
 
 
         book_list_info = {
-            'name': response.meta['book-list-name'],
-            'books': []
+            'name': response.meta['book_list_name'],
+            'books': [],
+            'link': response.meta['book_list_link']
         }
 
         items = response.xpath('//li[@class="subject-item"]')
         for item in items:
-
-            print(item.xpath('div[@class="info"]/div[@class="pub"]/text()').extract()[0])
-            print(item.xpath('div[@class="info"]/div[@class="star"]/span[@class="rating_nums"]/text()').extract())
-
             book_list_info['books'].append({
-                'book_title':  item.xpath('div[@class="info"]/h2/a/text()').extract()[0],
-                'book_pub':  item.xpath('div[@class="info"]/div[@class="pub"]/text()').extract()[0],
-                'book_rate':  item.xpath('div[@class="info"]/div[@class="star"]/span[@class="rating_nums"]/text()').extract()
+                'book_link': item.xpath('div[@class="info"]/h2/a/@href').extract()[0].strip(),
+                'book_title': item.xpath('div[@class="info"]/h2/a/text()').extract()[0].strip(),
+                'book_pub': item.css('.pub').xpath('text()').extract()[0].strip(),
+                'book_rate': '少于10人评价' if item.css('.rating_nums') is None else item.css('.rating_nums').xpath('text()').extract()[0].strip(),
 
             })
 
-
-        yield book_list_info
+            yield book_list_info
