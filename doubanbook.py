@@ -5,26 +5,17 @@ from Program.items import ProgramItem
 
 class DoubanbookSpider(scrapy.Spider):
     name = "doubanbook"
-    allowed_domains = ["book.douban.com/tag"]
-    #start_urls = ['https://book.douban.com/tag/']
+    allowed_domains = ["book.douban.com"]
+    start_urls = ['https://book.douban.com/tag/?view=cloud']
 
     def parse(self, response):
-        with open('douban.txt', 'w') as f:
-            f.write(response.text)
-
-        book_list_group = response.xpath('//div[@class="article"]/div[2]/div')
-
-        book_list_urls = []
-        for book_group in book_list_group:
-            # print({
-            #     'book_group_title': book_group.xpath('a[@class="tag-title-wrapper"]/@name').extract()[0],
-            #    # 'book_lists': book_group.xpath('table/tbody/tr/td/a/@href').extract(),
-            # })
-            book_list_urls.extend(book_group.xpath('table/tbody/tr/td/a/@href').extract())
-
+        book_list_group = response.xpath('//div[@class="article"]/div[2]/div')[0]
+        book_list_urls = book_list_group.xpath('table/tbody/tr/td/a/@href').extract()
         for book_list in book_list_urls:
-            yield scrapy.Request('https://book.douban.com' + book_list, callback=self.parse_book_list_detail)
 
+            yield scrapy.Request('https://book.douban.com' + book_list, callback=self.parse_book_list_detail, dont_filter=True, meta={
+                'book-list-name': book_list[5:]
+            })
 
             # item = ProgramItem()
             # item['book_list_title'] = book_list.xpath('header/h3/a/text()').extract()[0]
@@ -37,11 +28,25 @@ class DoubanbookSpider(scrapy.Spider):
         # summary = response.xpath('//div[@id="list-description"]/p/text()').extract()
         # item['book_list_summary'] = '\n'.join(summary)
         # yield item #将item提交给pipelines处理
+
+
+        book_list_info = {
+            'name': response.meta['book-list-name'],
+            'books': []
+        }
+
         items = response.xpath('//li[@class="subject-item"]')
-        print(items)
-        print('11111111111111111111111')
         for item in items:
-            print({
-                'book_title': item.xpath('div[@class="info"]/h2/a/text()').extract()[0]
+
+            print(item.xpath('div[@class="info"]/div[@class="pub"]/text()').extract()[0])
+            print(item.xpath('div[@class="info"]/div[@class="star"]/span[@class="rating_nums"]/text()').extract())
+
+            book_list_info['books'].append({
+                'book_title':  item.xpath('div[@class="info"]/h2/a/text()').extract()[0],
+                'book_pub':  item.xpath('div[@class="info"]/div[@class="pub"]/text()').extract()[0],
+                'book_rate':  item.xpath('div[@class="info"]/div[@class="star"]/span[@class="rating_nums"]/text()').extract()
+
             })
-            yield  item
+
+
+        yield book_list_info
